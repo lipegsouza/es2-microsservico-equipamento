@@ -9,7 +9,7 @@
     <version>2.5.5</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
-  <groupId>unirio.pm</groupId>
+    <groupId>com.microsservico.equipamento</groupId>
   <artifactId>es2-microsservico-equipamento</artifactId>
   <version>1.0</version>
   <name>es2-microsservico-equipamento</name>
