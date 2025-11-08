@@ -55,7 +55,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void cadastrarErro() {
+    void cadastrarErro() {
         Bicicleta bicicletaInvalida = new Bicicleta();
         bicicletaInvalida.setModelo("Modelo");
         bicicletaInvalida.setAno("2023");
@@ -69,7 +69,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void buscarSucesso() {
+    void buscarSucesso() {
         Bicicleta bicicleta = new Bicicleta();
         bicicleta.setId(42);
         bicicleta.setMarca("Monark");
@@ -84,7 +84,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void buscarErro() {
+    void buscarErro() {
         int idInexistente = 99;
 
         when(repository.buscar(idInexistente)).thenReturn(Optional.empty());
@@ -98,7 +98,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void listarSucesso() {
+    void listarSucesso() {
         List<Bicicleta> listaDeBicicletas = Arrays.asList(new Bicicleta(), new Bicicleta());
         when(repository.listar()).thenReturn(listaDeBicicletas);
 
@@ -110,7 +110,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void editarSucesso() {
+    void editarSucesso() {
         int idExistente = 1;
 
         Bicicleta dadosNovos = new Bicicleta();
@@ -143,7 +143,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void editarErro() {
+    void editarErro() {
         int idInexistente = 99;
 
         Bicicleta dadosNovos = new Bicicleta();
@@ -161,8 +161,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void deletarSucesso() {
-        // --- Arrange ---
+    void deletarSucesso() {
         int idExistente = 1;
         Bicicleta bicicletaExistente = new Bicicleta();
         bicicletaExistente.setId(idExistente);
@@ -177,7 +176,7 @@ public class BicicletaServiceTest {
     }
 
     @Test
-    public void deletarErro() {
+    void deletarErro() {
         int idExistente = 1;
         Bicicleta bicicletaExistente = new Bicicleta();
         bicicletaExistente.setId(idExistente);
@@ -191,6 +190,6 @@ public class BicicletaServiceTest {
 
         assertEquals("Ação inválida. Apenas bicicletas com status APOSENTADA podem ser excluídas.", exception.getMessage());
         verify(repository, times(1)).buscar(idExistente);
-        verify(repository, times(0)).deletar(idExistente); // Verifica que NUNCA foi deletada
+        verify(repository, times(0)).deletar(idExistente);
     }
 }

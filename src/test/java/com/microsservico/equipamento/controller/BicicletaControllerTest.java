@@ -45,7 +45,7 @@ public class BicicletaControllerTest {
     private BicicletaConverter converter;
 
     @Test
-    public void cadastrarSucesso() throws Exception {
+    void cadastrarSucesso() throws Exception {
 
         BicicletaRequest requestDto = new BicicletaRequest();
         requestDto.setMarca("Caloi");
@@ -73,7 +73,7 @@ public class BicicletaControllerTest {
     }
 
     @Test
-    public void buscarSucesso() throws Exception {
+    void buscarSucesso() throws Exception {
 
         Bicicleta bicicletaDoServico = new Bicicleta();
         bicicletaDoServico.setId(1);
@@ -92,7 +92,7 @@ public class BicicletaControllerTest {
     }
 
     @Test
-    public void buscarErro() throws Exception {
+    void buscarErro() throws Exception {
         int idInexistente = 99;
         String mensagemErro = "Bicicleta não encontrada com o ID: " + idInexistente;
 
@@ -107,7 +107,7 @@ public class BicicletaControllerTest {
     }
 
     @Test
-    public void listarSucesso() throws Exception {
+    void listarSucesso() throws Exception {
 
         Bicicleta bicicleta1 = new Bicicleta();
         bicicleta1.setId(1);
@@ -134,7 +134,7 @@ public class BicicletaControllerTest {
     }
 
     @Test
-    public void editarSucesso() throws Exception {
+    void editarSucesso() throws Exception {
         int idExistente = 1;
 
         BicicletaRequest requestDto = new BicicletaRequest();
@@ -166,7 +166,7 @@ public class BicicletaControllerTest {
     }
 
     @Test
-    public void editarErro() throws Exception {
+    void editarErro() throws Exception {
         int idInexistente = 99;
         String mensagemErro = "Bicicleta não encontrada com o ID: " + idInexistente;
 
@@ -188,7 +188,7 @@ public class BicicletaControllerTest {
     }
 
     @Test
-    public void deletarSucesso() throws Exception {
+    void deletarSucesso() throws Exception {
         int idExistente = 1;
 
         mockMvc.perform(delete("/bicicleta/" + idExistente)
@@ -198,7 +198,7 @@ public class BicicletaControllerTest {
     }
 
     @Test
-    public void deletarErro() throws Exception {
+    void deletarErro() throws Exception {
         int idInexistente = 99;
         String mensagemErro = "Bicicleta não encontrada com o ID: " + idInexistente;
 
