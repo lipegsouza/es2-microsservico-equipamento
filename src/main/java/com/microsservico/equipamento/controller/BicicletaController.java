@@ -1,4 +1,64 @@
 package com.microsservico.equipamento.controller;
 
+import com.microsservico.equipamento.domain.Bicicleta;
+import com.microsservico.equipamento.dto.request.BicicletaRequest;
+import com.microsservico.equipamento.dto.response.BicicletaResponse;
+import com.microsservico.equipamento.service.BicicletaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/bicicleta")
 public class BicicletaController {
+
+    @Autowired
+    private BicicletaService service;
+
+    @Autowired
+    private BicicletaConverter converter;
+
+    @PostMapping
+    public ResponseEntity<BicicletaResponse> cadastrar(@RequestBody BicicletaRequest bicicletaRequest) {
+        Bicicleta bicicletaDomain = converter.dtoToDomain(bicicletaRequest);
+        Bicicleta bicicleta = service.cadastrar(bicicletaDomain);
+        BicicletaResponse bicicletaResponse = converter.domainToDto(bicicleta);
+        return ResponseEntity.ok(bicicletaResponse);
+    }
+
+    @GetMapping("/{idBicicleta}")
+    public ResponseEntity<BicicletaResponse> buscar(@PathVariable int idBicicleta) {
+        Bicicleta bicicleta = service.buscar(idBicicleta);
+        BicicletaResponse bicicletaResponse = converter.domainToDto(bicicleta);
+        return ResponseEntity.ok(bicicletaResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BicicletaResponse>> listar() {
+        List<Bicicleta> bicicletas = service.listar();
+        List<BicicletaResponse> bicicletaResponses = bicicletas.stream()
+                .map(converter::domainToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(bicicletaResponses);
+    }
+
+    @PutMapping("/{idBicicleta}")
+    public ResponseEntity<BicicletaResponse> editar(@PathVariable int idBicicleta, @RequestBody BicicletaRequest bicicletaRequest) {
+        Bicicleta bicicleta = converter.dtoToDomain(bicicletaRequest);
+
+        Bicicleta bicicletaEditada = service.editar(idBicicleta, bicicleta);
+
+        BicicletaResponse bicicletaResponse = converter.domainToDto(bicicletaEditada);
+
+        return ResponseEntity.ok(bicicletaResponse);
+    }
+
+    @DeleteMapping("/{idBicicleta}")
+    public ResponseEntity<Void> deletar(@PathVariable int idBicicleta) {
+        service.deletar(idBicicleta);
+
+        return ResponseEntity.ok().build();
+    }
 }
