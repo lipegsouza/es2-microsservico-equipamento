@@ -8,12 +8,14 @@ import com.microsservico.equipamento.repository.BicicletaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 @Service
 public class BicicletaService {
 
     private final BicicletaRepository repository;
+    private static final AtomicInteger numeroCounter = new AtomicInteger(1);
 
     private void validar(Bicicleta bicicleta) {
         if (bicicleta.getMarca() == null || bicicleta.getMarca().isBlank() ||
@@ -21,13 +23,15 @@ public class BicicletaService {
                 bicicleta.getAno() == null || bicicleta.getAno().isBlank()) {
             throw new InvalidActionException("Dados inválidos. Marca, Modelo e Ano são obrigatórios.");
         }
-        if (bicicleta.getNumero() == 0) {
-            throw new InvalidActionException("Dados inválidos. O número da bicicleta é obrigatório.");
-        }
+    }
+
+    public int gerarId() {
+        return numeroCounter.getAndIncrement();
     }
 
     public Bicicleta cadastrar(Bicicleta bicicleta) {
         validar(bicicleta);
+        bicicleta.setNumero(gerarId());
         bicicleta.setStatus(StatusBicicleta.NOVA);
         return repository.salvar(bicicleta);
     }
