@@ -43,6 +43,6 @@ public class TrancaRepository {
     public List<Tranca> buscarEmTotem(int idTotem) {
         return trancas.values().stream()
                 .filter(tranca -> tranca.getIdTotem() != null && tranca.getIdTotem() == idTotem)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

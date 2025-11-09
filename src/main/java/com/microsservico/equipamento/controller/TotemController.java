@@ -11,9 +11,7 @@ import com.microsservico.equipamento.service.TotemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/totem")
@@ -40,7 +38,7 @@ public class TotemController {
         List<Totem> listaDeTotens = service.listar();
         List<TotemResponse> listaDeResponse = listaDeTotens.stream()
                 .map(converter::domainToDto)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(listaDeResponse);
     }
 
@@ -63,7 +61,7 @@ public class TotemController {
         List<Tranca> listaDeTrancas = service.listarTrancas(idTotem);
         List<TrancaResponse> listaDeResponse = listaDeTrancas.stream()
                 .map(trancaConverter::domainToDto)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(listaDeResponse);
     }
 
@@ -72,7 +70,7 @@ public class TotemController {
         List<Bicicleta> listaDeBicicletas = service.listarBicicletas(idTotem);
         List<BicicletaResponse> listaDeResponse = listaDeBicicletas.stream()
                 .map(bicicletaConverter::domainToDto)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(listaDeResponse);
     }
 }

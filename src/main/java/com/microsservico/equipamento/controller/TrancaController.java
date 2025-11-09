@@ -33,7 +33,7 @@ public class TrancaController {
         List<Tranca> listaDeTrancas = service.listar();
         List<TrancaResponse> listaDeResponse = listaDeTrancas.stream()
                 .map(converter::domainToDto)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(listaDeResponse);
     }
 

@@ -43,6 +43,6 @@ public class BicicletaRepository {
     public List<Bicicleta> buscarEmTrancasDeTotem(List<Integer> ids) {
         return bicicletas.values().stream()
                 .filter(bicicleta -> ids.contains(bicicleta.getId()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

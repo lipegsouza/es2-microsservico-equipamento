@@ -39,7 +39,7 @@ public class BicicletaController {
         List<Bicicleta> bicicletas = service.listar();
         List<BicicletaResponse> bicicletaResponses = bicicletas.stream()
                 .map(converter::domainToDto)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(bicicletaResponses);
     }
 
