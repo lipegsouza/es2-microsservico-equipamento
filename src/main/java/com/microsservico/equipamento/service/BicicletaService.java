@@ -25,13 +25,13 @@ public class BicicletaService {
         }
     }
 
-    public int gerarId() {
+    public int gerarNumero() {
         return numeroCounter.getAndIncrement();
     }
 
     public Bicicleta cadastrar(Bicicleta bicicleta) {
         validar(bicicleta);
-        bicicleta.setNumero(gerarId());
+        bicicleta.setNumero(gerarNumero());
         bicicleta.setStatus(StatusBicicleta.NOVA);
         return repository.salvar(bicicleta);
     }
