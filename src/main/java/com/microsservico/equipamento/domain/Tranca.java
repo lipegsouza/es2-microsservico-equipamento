@@ -5,6 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tranca")
 public class Tranca {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -18,6 +19,8 @@ public class Tranca {
     private StatusTranca status;
 
     private Integer bicicleta;
+
+    private Integer idTotem;
 
     public int getId() {
         return id;
@@ -73,5 +76,13 @@ public class Tranca {
 
     public void setBicicleta(Integer bicicleta) {
         this.bicicleta = bicicleta;
+    }
+
+    public Integer getIdTotem() {
+        return idTotem;
+    }
+
+    public void setIdTotem(Integer idTotem) {
+        this.idTotem = idTotem;
     }
 }

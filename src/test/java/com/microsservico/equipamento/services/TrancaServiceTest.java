@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TrancaServiceTest {
+    public class TrancaServiceTest {
 
     @Mock
     private TrancaRepository repository;
@@ -37,7 +37,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void cadastrarSucesso() {
+    void cadastrarSucesso() {
         Tranca trancaEntrada = exemploTeste();
 
         when(repository.salvar(any(Tranca.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -50,7 +50,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void cadastrarErro() {
+    void cadastrarErro() {
         Tranca trancaInvalida = exemploTeste();
         trancaInvalida.setNumero(0);
 
@@ -61,7 +61,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void cadastrarErro2() {
+    void cadastrarErro2() {
         Tranca trancaInvalida = exemploTeste();
         trancaInvalida.setModelo("");
 
@@ -72,7 +72,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void buscarSucesso() {
+    void buscarSucesso() {
         Tranca tranca = exemploTeste();
         tranca.setId(1);
         when(repository.buscar(1)).thenReturn(Optional.of(tranca));
@@ -85,7 +85,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void buscarErro() {
+    void buscarErro() {
         when(repository.buscar(99)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
@@ -94,7 +94,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void editarSucesso() {
+    void editarSucesso() {
         int idExistente = 1;
 
         Tranca dadosNovos = new Tranca();
@@ -125,7 +125,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void deletarSucesso() {
+    void deletarSucesso() {
         int idExistente = 1;
         Tranca trancaExistente = exemploTeste();
         trancaExistente.setId(idExistente);
@@ -140,7 +140,7 @@ public class TrancaServiceTest {
     }
 
     @Test
-    public void deletarErro() {
+    void deletarErro() {
         int idExistente = 1;
         Tranca trancaExistente = exemploTeste();
         trancaExistente.setId(idExistente);

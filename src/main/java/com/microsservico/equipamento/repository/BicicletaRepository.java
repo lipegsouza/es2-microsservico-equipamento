@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 public class BicicletaRepository {
@@ -39,4 +40,9 @@ public class BicicletaRepository {
         bicicletas.remove(id);
     }
 
+    public List<Bicicleta> buscarEmTrancasDeTotem(List<Integer> ids) {
+        return bicicletas.values().stream()
+                .filter(bicicleta -> ids.contains(bicicleta.getId()))
+                .collect(Collectors.toList());
+    }
 }

@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TrancaController.class)
-public class TrancaControllerTest {
+    public class TrancaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,7 +48,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void cadastrarSucesso() throws Exception {
+    void cadastrarSucesso() throws Exception {
         TrancaRequest requestDto = exemploTeste();
 
         Tranca trancaConvertida = new Tranca();
@@ -73,7 +73,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void cadastrarErro() throws Exception {
+    void cadastrarErro() throws Exception {
         TrancaRequest requestDtoInvalido = exemploTeste();
         requestDtoInvalido.setModelo("");
 
@@ -94,7 +94,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void buscarSucesso() throws Exception {
+    void buscarSucesso() throws Exception {
         Tranca tranca = new Tranca();
         tranca.setId(1);
         TrancaResponse responseDto = new TrancaResponse();
@@ -110,7 +110,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void buscarErro() throws Exception {
+    void buscarErro() throws Exception {
         int idInexistente = 99;
         String msgErro = "Tranca não encontrada com o ID: " + idInexistente;
         when(service.buscar(idInexistente)).thenThrow(new NotFoundException(msgErro));
@@ -123,7 +123,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void listarSucesso() throws Exception {
+    void listarSucesso() throws Exception {
         Tranca tranca1 = new Tranca();
         tranca1.setId(1);
         Tranca tranca2 = new Tranca();
@@ -148,7 +148,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void editarSucesso() throws Exception {
+    void editarSucesso() throws Exception {
         int idExistente = 1;
         TrancaRequest requestDto = exemploTeste();
         requestDto.setModelo("Modelo-Novo");
@@ -177,7 +177,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void deletarSucesso() throws Exception {
+    void deletarSucesso() throws Exception {
         int idExistente = 1;
 
         mockMvc.perform(delete("/tranca/" + idExistente)
@@ -186,7 +186,7 @@ public class TrancaControllerTest {
     }
 
     @Test
-    public void deletarErro() throws Exception {
+    void deletarErro() throws Exception {
         int idExistente = 1;
         String msgErro = "Ação inválida. Apenas trancas sem bicicletas podem ser excluídas.";
 
