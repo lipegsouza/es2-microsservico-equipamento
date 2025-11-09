@@ -5,16 +5,15 @@ import com.microsservico.equipamento.domain.StatusBicicleta;
 import com.microsservico.equipamento.exception.InvalidActionException;
 import com.microsservico.equipamento.exception.NotFoundException;
 import com.microsservico.equipamento.repository.BicicletaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class BicicletaService {
 
-    @Autowired
-    private BicicletaRepository repository;
+    private final BicicletaRepository repository;
 
     private void validar(Bicicleta bicicleta) {
         if (bicicleta.getMarca() == null || bicicleta.getMarca().isBlank() ||

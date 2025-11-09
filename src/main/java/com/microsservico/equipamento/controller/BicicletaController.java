@@ -4,7 +4,7 @@ import com.microsservico.equipamento.domain.Bicicleta;
 import com.microsservico.equipamento.dto.request.BicicletaRequest;
 import com.microsservico.equipamento.dto.response.BicicletaResponse;
 import com.microsservico.equipamento.service.BicicletaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -12,13 +12,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/bicicleta")
+@RequiredArgsConstructor
 public class BicicletaController {
 
-    @Autowired
-    private BicicletaService service;
+    private final BicicletaService service;
 
-    @Autowired
-    private BicicletaConverter converter;
+    private final BicicletaConverter converter;
 
     @PostMapping
     public ResponseEntity<BicicletaResponse> cadastrar(@RequestBody BicicletaRequest bicicletaRequest) {

@@ -8,23 +8,20 @@ import com.microsservico.equipamento.exception.NotFoundException;
 import com.microsservico.equipamento.repository.BicicletaRepository;
 import com.microsservico.equipamento.repository.TotemRepository;
 import com.microsservico.equipamento.repository.TrancaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class TotemService {
+    private final TotemRepository repository;
 
-    @Autowired
-    private TotemRepository repository;
+    private final TrancaRepository trancaRepository;
 
-    @Autowired
-    private TrancaRepository trancaRepository;
-
-    @Autowired
-    private BicicletaRepository bicicletaRepository;
+    private final  BicicletaRepository bicicletaRepository;
 
     private void validar(Totem totem) {
         if (totem.getLocalizacao() == null || totem.getLocalizacao().isBlank() ||

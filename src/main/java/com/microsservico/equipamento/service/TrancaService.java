@@ -5,16 +5,16 @@ import com.microsservico.equipamento.domain.Tranca;
 import com.microsservico.equipamento.exception.InvalidActionException;
 import com.microsservico.equipamento.exception.NotFoundException;
 import com.microsservico.equipamento.repository.TrancaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class TrancaService {
 
-    @Autowired
-    private TrancaRepository repository;
+    private final TrancaRepository repository;
 
     private void validar(Tranca tranca) {
         if (tranca.getModelo() == null || tranca.getModelo().isBlank() ||

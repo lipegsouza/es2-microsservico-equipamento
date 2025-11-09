@@ -4,7 +4,7 @@ import com.microsservico.equipamento.domain.Tranca;
 import com.microsservico.equipamento.dto.request.TrancaRequest;
 import com.microsservico.equipamento.dto.response.TrancaResponse;
 import com.microsservico.equipamento.service.TrancaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,13 +13,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tranca")
+@RequiredArgsConstructor
 public class TrancaController {
 
-    @Autowired
-    private TrancaService service;
+    private final TrancaService service;
 
-    @Autowired
-    private TrancaConverter converter;
+    private final TrancaConverter converter;
 
     @PostMapping
     public ResponseEntity<TrancaResponse> cadastrar(@RequestBody TrancaRequest trancaRequest) {

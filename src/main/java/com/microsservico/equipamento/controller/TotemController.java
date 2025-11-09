@@ -8,7 +8,7 @@ import com.microsservico.equipamento.dto.response.BicicletaResponse;
 import com.microsservico.equipamento.dto.response.TotemResponse;
 import com.microsservico.equipamento.dto.response.TrancaResponse;
 import com.microsservico.equipamento.service.TotemService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,19 +17,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/totem")
+@RequiredArgsConstructor
 public class TotemController {
+    private final TotemService service;
 
-    @Autowired
-    private TotemService service;
+    private final TotemConverter converter;
 
-    @Autowired
-    private TotemConverter converter;
+    private final TrancaConverter trancaConverter;
 
-    @Autowired
-    private TrancaConverter trancaConverter;
-
-    @Autowired
-    private BicicletaConverter bicicletaConverter;
+    private final BicicletaConverter bicicletaConverter;
 
     @PostMapping
     public ResponseEntity<TotemResponse> cadastrar(@RequestBody TotemRequest totemRequest) {
