@@ -3,7 +3,7 @@ package com.microsservico.equipamento.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Setter
 @Getter
