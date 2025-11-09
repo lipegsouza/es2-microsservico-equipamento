@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
     private BicicletaService service;
 
     @Test
-    public void cadastrarSucesso() {
+    void cadastrarSucesso() {
 
         Bicicleta bicicletaDeEntrada = new Bicicleta();
         bicicletaDeEntrada.setMarca("Caloi");

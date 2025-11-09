@@ -13,7 +13,4 @@ public class BicicletaResponse {
     private String ano;
     private int numero;
     private String status;
-
-    public BicicletaResponse() {
-    }
 }

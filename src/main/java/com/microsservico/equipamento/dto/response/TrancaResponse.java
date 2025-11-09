@@ -14,7 +14,4 @@ public class TrancaResponse {
     private String modelo;
     private String status;
     private Integer bicicleta;
-
-    public TrancaResponse() {
-    }
 }

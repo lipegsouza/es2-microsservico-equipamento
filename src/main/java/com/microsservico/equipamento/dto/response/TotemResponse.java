@@ -10,7 +10,4 @@ public class TotemResponse {
     private int id;
     private String localizacao;
     private String descricao;
-
-    public TotemResponse() {
-    }
 }
