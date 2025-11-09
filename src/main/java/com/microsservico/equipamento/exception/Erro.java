@@ -1,5 +1,10 @@
 package com.microsservico.equipamento.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class Erro {
     private String codigo;
     private String mensagem;
@@ -9,16 +14,4 @@ public class Erro {
         this.mensagem = mensagem;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-    public String getMensagem() {
-        return mensagem;
-    }
-    public void setMensagem(String mensagem) {
-        this.mensagem = mensagem;
-    }
 }

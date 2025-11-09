@@ -1,7 +1,12 @@
 package com.microsservico.equipamento.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "tranca")
 public class Tranca {
@@ -21,68 +26,4 @@ public class Tranca {
     private Integer bicicleta;
 
     private Integer idTotem;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getNumero() {
-        return numero;
-    }
-
-    public void setNumero(int numero) {
-        this.numero = numero;
-    }
-
-    public String getLocalizacao() {
-        return localizacao;
-    }
-
-    public void setLocalizacao(String localizacao) {
-        this.localizacao = localizacao;
-    }
-
-    public String getAnoDeFabricacao() {
-        return anoDeFabricacao;
-    }
-
-    public void setAnoDeFabricacao(String anoDeFabricacao) {
-        this.anoDeFabricacao = anoDeFabricacao;
-    }
-
-    public String getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
-    }
-
-    public StatusTranca getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusTranca status) {
-        this.status = status;
-    }
-
-    public Integer getBicicleta() {
-        return bicicleta;
-    }
-
-    public void setBicicleta(Integer bicicleta) {
-        this.bicicleta = bicicleta;
-    }
-
-    public Integer getIdTotem() {
-        return idTotem;
-    }
-
-    public void setIdTotem(Integer idTotem) {
-        this.idTotem = idTotem;
-    }
 }

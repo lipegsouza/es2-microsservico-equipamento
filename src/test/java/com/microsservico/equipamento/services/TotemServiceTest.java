@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TotemServiceTest {
+    public class TotemServiceTest {
 
     @Mock
     private TotemRepository repository;
@@ -44,7 +44,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void cadastrarSucesso() {
+    void cadastrarSucesso() {
         Totem totemEntrada = exemploTeste();
         when(repository.salvar(any(Totem.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -56,7 +56,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void cadastrarErro() {
+    void cadastrarErro() {
         Totem totemInvalido = exemploTeste();
         totemInvalido.setLocalizacao("");
 
@@ -67,7 +67,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void buscarSucesso() {
+    void buscarSucesso() {
         Totem totem = exemploTeste();
         totem.setId(1);
         when(repository.buscar(1)).thenReturn(Optional.of(totem));
@@ -80,7 +80,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void buscarErro() {
+    void buscarErro() {
         when(repository.buscar(99)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
@@ -89,7 +89,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void editarSucesso() {
+    void editarSucesso() {
         int idExistente = 1;
         Totem dadosNovos = new Totem();
         dadosNovos.setLocalizacao("Nova Rua");
@@ -111,7 +111,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void deletarSucesso() {
+    void deletarSucesso() {
         int idExistente = 1;
         Totem totemExistente = exemploTeste();
         totemExistente.setId(idExistente);
@@ -127,7 +127,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void deletarErro() {
+    void deletarErro() {
         int idExistente = 1;
         Totem totemExistente = exemploTeste();
         totemExistente.setId(idExistente);
@@ -143,7 +143,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void listarTrancasSucesso() {
+    void listarTrancasSucesso() {
         int idTotem = 1;
         when(repository.buscar(idTotem)).thenReturn(Optional.of(new Totem()));
         when(trancaRepository.buscarEmTotem(idTotem)).thenReturn(List.of(new Tranca(), new Tranca()));
@@ -156,7 +156,7 @@ public class TotemServiceTest {
     }
 
     @Test
-    public void listarBicicletasSucesso() {
+    void listarBicicletasSucesso() {
         int idTotem = 1;
 
         Tranca tranca1 = new Tranca();

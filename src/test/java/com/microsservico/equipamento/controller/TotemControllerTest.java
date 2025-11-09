@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TotemController.class)
-public class TotemControllerTest {
+    public class TotemControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -57,7 +57,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void cadastrarSucesso() throws Exception {
+    void cadastrarSucesso() throws Exception {
         TotemRequest requestDto = exemploTeste();
         Totem totem = new Totem();
         totem.setId(1);
@@ -76,7 +76,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void cadastrarErro() throws Exception {
+    void cadastrarErro() throws Exception {
         TotemRequest requestDtoInvalido = exemploTeste();
         requestDtoInvalido.setLocalizacao("");
 
@@ -94,7 +94,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarSucesso() throws Exception {
+    void listarSucesso() throws Exception {
         when(service.listar()).thenReturn(List.of(new Totem(), new Totem()));
         when(converter.domainToDto(any(Totem.class))).thenReturn(new TotemResponse());
 
@@ -105,7 +105,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void editarSucesso() throws Exception {
+    void editarSucesso() throws Exception {
         int idExistente = 1;
         TotemRequest requestDto = exemploTeste();
         requestDto.setLocalizacao("Nova");
@@ -131,7 +131,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void editarErro() throws Exception {
+    void editarErro() throws Exception {
         int idInexistente = 99;
         String msgErro = "Totem não encontrado com o ID: " + idInexistente;
 
@@ -146,14 +146,14 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void deletarSucesso() throws Exception {
+    void deletarSucesso() throws Exception {
         mockMvc.perform(delete("/totem/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void deletarErro() throws Exception {
+    void deletarErro() throws Exception {
         int idExistente = 1;
         String msgErro = "Ação inválida. Apenas totens sem trancas podem ser excluídos.";
 
@@ -169,7 +169,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarTrancasSucesso() throws Exception {
+    void listarTrancasSucesso() throws Exception {
         int idTotem = 1;
         when(service.listarTrancas(idTotem)).thenReturn(List.of(new Tranca()));
         when(trancaConverter.domainToDto(any(Tranca.class))).thenReturn(new TrancaResponse());
@@ -181,7 +181,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarBicicletasSucesso() throws Exception {
+    void listarBicicletasSucesso() throws Exception {
         int idTotem = 1;
         when(service.listarBicicletas(idTotem)).thenReturn(List.of(new Bicicleta()));
         when(bicicletaConverter.domainToDto(any(Bicicleta.class))).thenReturn(new BicicletaResponse());
@@ -193,7 +193,7 @@ public class TotemControllerTest {
     }
 
     @Test
-    public void listarTrancasErro() throws Exception {
+    void listarTrancasErro() throws Exception {
         int idInexistente = 99;
         String msgErro = "Totem não encontrado com o ID: " + idInexistente;
         when(service.listarTrancas(idInexistente)).thenThrow(new NotFoundException(msgErro));
