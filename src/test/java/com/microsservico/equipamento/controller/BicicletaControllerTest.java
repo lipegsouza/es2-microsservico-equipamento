@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BicicletaController.class)
-public class BicicletaControllerTest {
+    class BicicletaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

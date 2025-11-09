@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-    public class TotemServiceTest {
+    class TotemServiceTest {
 
     @Mock
     private TotemRepository repository;
