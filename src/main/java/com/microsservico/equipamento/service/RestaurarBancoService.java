@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class restaurarBancoService {
+public class RestaurarBancoService {
 
     private final BicicletaRepository bicicletaRepository;
     private final TotemRepository totemRepository;
