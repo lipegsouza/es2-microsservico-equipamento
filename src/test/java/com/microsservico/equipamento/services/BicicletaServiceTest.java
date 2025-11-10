@@ -349,4 +349,112 @@ class BicicletaServiceTest {
         when(repository.buscar(1)).thenReturn(Optional.of(bicicleta));
         assertThrows(InvalidActionException.class, () -> service.alterarStatus(1, "STATUS_INVALIDO"));
     }
+
+    @Test
+    void integrarNaRedeErroTrancaJaPossuiBicicleta() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        bicicleta.setStatus(StatusBicicleta.NOVA);
+
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
+        tranca.setBicicleta(99);
+
+        IntegrarBicicletaRequest request = new IntegrarBicicletaRequest();
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+
+        when(repository.buscar(1)).thenReturn(Optional.of(bicicleta));
+        when(trancaService.buscar(1)).thenReturn(tranca);
+
+        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> service.integrarNaRede(request));
+
+        assertEquals("Tranca já possui uma bicicleta.", exception.getMessage());
+    }
+
+    @Test
+    void retirarDaRedeErroStatusAcaoReparadorInvalido() {
+        RetirarBicicletaRequest request = new RetirarBicicletaRequest();
+        request.setStatusAcaoReparador("STATUS_QUE_NAO_EXISTE");
+
+        when(repository.buscar(1)).thenReturn(Optional.of(new Bicicleta()));
+        when(trancaService.buscar(1)).thenReturn(new Tranca());
+
+        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> service.retirarDaRede(request));
+
+        assertEquals("Status de ação inválido: STATUS_QUE_NAO_EXISTE", exception.getMessage());
+    }
+
+    @Test
+    void retirarDaRedeErroTrancaNaoOcupada() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
+        tranca.setBicicleta(1);
+
+        RetirarBicicletaRequest request = new RetirarBicicletaRequest();
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+        request.setStatusAcaoReparador("EM_REPARO");
+
+        when(repository.buscar(1)).thenReturn(Optional.of(bicicleta));
+        when(trancaService.buscar(1)).thenReturn(tranca);
+
+        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> service.retirarDaRede(request));
+
+        assertEquals("Tranca não está ocupada.", exception.getMessage());
+    }
+
+    @Test
+    void retirarDaRedeErroBicicletaNaoCorrespondeNaTranca() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.OCUPADA);
+        tranca.setBicicleta(99);
+
+        RetirarBicicletaRequest request = new RetirarBicicletaRequest();
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+        request.setStatusAcaoReparador("EM_REPARO");
+
+        when(repository.buscar(1)).thenReturn(Optional.of(bicicleta));
+        when(trancaService.buscar(1)).thenReturn(tranca);
+
+        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> service.retirarDaRede(request));
+
+        assertEquals("Bicicleta não corresponde à bicicleta na tranca.", exception.getMessage());
+    }
+
+    @Test
+    void retirarDaRedeErroBicicletaNulaNaTranca() {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        bicicleta.setStatus(StatusBicicleta.REPARO_SOLICITADO);
+
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.OCUPADA);
+        tranca.setBicicleta(null);
+
+        RetirarBicicletaRequest request = new RetirarBicicletaRequest();
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+        request.setStatusAcaoReparador("EM_REPARO");
+
+        when(repository.buscar(1)).thenReturn(Optional.of(bicicleta));
+        when(trancaService.buscar(1)).thenReturn(tranca);
+
+        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> service.retirarDaRede(request));
+
+        assertEquals("Bicicleta não corresponde à bicicleta na tranca.", exception.getMessage());
+    }
 }

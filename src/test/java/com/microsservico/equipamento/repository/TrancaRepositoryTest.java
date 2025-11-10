@@ -95,18 +95,18 @@ class TrancaRepositoryTest {
 
     @Test
     void testBuscarEmTotem() {
-        Tranca t1_T5 = criarTranca(101, 5);
-        Tranca t2_T5 = criarTranca(102, 5);
-        Tranca t3_T10 = criarTranca(103, 10);
+        Tranca t1T5 = criarTranca(101, 5);
+        Tranca t2T5 = criarTranca(102, 5);
+        Tranca t3T10 = criarTranca(103, 10);
 
         List<Tranca> trancasTotem5 = repository.buscarEmTotem(5);
         assertEquals(2, trancasTotem5.size());
-        assertTrue(trancasTotem5.contains(t1_T5));
-        assertTrue(trancasTotem5.contains(t2_T5));
+        assertTrue(trancasTotem5.contains(t1T5));
+        assertTrue(trancasTotem5.contains(t2T5));
 
         List<Tranca> trancasTotem10 = repository.buscarEmTotem(10);
         assertEquals(1, trancasTotem10.size());
-        assertTrue(trancasTotem10.contains(t3_T10));
+        assertTrue(trancasTotem10.contains(t3T10));
 
         List<Tranca> trancasTotem99 = repository.buscarEmTotem(99);
         assertEquals(0, trancasTotem99.size());
