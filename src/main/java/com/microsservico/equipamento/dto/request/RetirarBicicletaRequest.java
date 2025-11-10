@@ -1,8 +1,10 @@
 package com.microsservico.equipamento.dto.request;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class RetirarBicicletaRequest {
     private Integer idTranca;
     private Integer idBicicleta;
