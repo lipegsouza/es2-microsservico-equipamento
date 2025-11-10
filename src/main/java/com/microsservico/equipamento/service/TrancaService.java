@@ -64,4 +64,8 @@ public class TrancaService {
 
         repository.deletar(tranca.getId());
     }
+
+    public void salvar(Tranca tranca) {
+        repository.salvar(tranca);
+    }
 }

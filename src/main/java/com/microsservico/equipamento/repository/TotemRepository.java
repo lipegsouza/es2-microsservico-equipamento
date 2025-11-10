@@ -40,4 +40,8 @@ public class TotemRepository {
         totens.remove(id);
     }
 
+    public void restaurar() {
+        totens.clear();
+        idCounter.set(1);
+    }
 }

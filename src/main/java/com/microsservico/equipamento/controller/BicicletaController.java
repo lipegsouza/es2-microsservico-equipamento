@@ -2,6 +2,8 @@ package com.microsservico.equipamento.controller;
 
 import com.microsservico.equipamento.domain.Bicicleta;
 import com.microsservico.equipamento.dto.request.BicicletaRequest;
+import com.microsservico.equipamento.dto.request.IntegrarBicicletaRequest;
+import com.microsservico.equipamento.dto.request.RetirarBicicletaRequest;
 import com.microsservico.equipamento.dto.response.BicicletaResponse;
 import com.microsservico.equipamento.service.BicicletaService;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +60,24 @@ public class BicicletaController {
         service.deletar(idBicicleta);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/integrarNaRede")
+    public ResponseEntity<Void> integrarNaRede(@RequestBody IntegrarBicicletaRequest request) {
+        service.integrarNaRede(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/retirarDaRede")
+    public ResponseEntity<Void> retirarDaRede(@RequestBody RetirarBicicletaRequest request) {
+        service.retirarDaRede(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{idBicicleta}/status/{acao}")
+    public ResponseEntity<BicicletaResponse> alterarStatus(@PathVariable int idBicicleta, @PathVariable String acao) {
+        Bicicleta bicicleta = service.alterarStatus(idBicicleta, acao);
+        BicicletaResponse bicicletaResponse = converter.domainToDto(bicicleta);
+        return ResponseEntity.ok(bicicletaResponse);
     }
 }

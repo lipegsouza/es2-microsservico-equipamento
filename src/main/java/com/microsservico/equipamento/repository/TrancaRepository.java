@@ -2,7 +2,6 @@ package com.microsservico.equipamento.repository;
 
 import com.microsservico.equipamento.domain.Tranca;
 import org.springframework.stereotype.Repository;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,5 +43,10 @@ public class TrancaRepository {
         return trancas.values().stream()
                 .filter(tranca -> tranca.getIdTotem() != null && tranca.getIdTotem() == idTotem)
                 .toList();
+    }
+
+    public void restaurar() {
+        trancas.clear();
+        idCounter.set(1);
     }
 }

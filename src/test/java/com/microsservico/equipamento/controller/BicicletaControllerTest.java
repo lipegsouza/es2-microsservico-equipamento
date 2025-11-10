@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsservico.equipamento.domain.Bicicleta;
 import com.microsservico.equipamento.domain.StatusBicicleta;
 import com.microsservico.equipamento.dto.request.BicicletaRequest;
+import com.microsservico.equipamento.dto.request.IntegrarBicicletaRequest;
+import com.microsservico.equipamento.dto.request.RetirarBicicletaRequest;
 import com.microsservico.equipamento.dto.response.BicicletaResponse;
+import com.microsservico.equipamento.exception.InvalidActionException;
 import com.microsservico.equipamento.exception.NotFoundException;
 import com.microsservico.equipamento.service.BicicletaService;
 import org.junit.jupiter.api.Test;
@@ -18,19 +21,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq; // NOVO IMPORT
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-// NOVOS IMPORTS
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-// FIM NOVOS IMPORTS
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BicicletaController.class)
-    class BicicletaControllerTest {
+class BicicletaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -213,5 +216,80 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
                 .andExpect(jsonPath("$.codigo").value("404"))
                 .andExpect(jsonPath("$.mensagem").value(mensagemErro));
+    }
+
+    @Test
+    void integrarNaRedeSucesso() throws Exception {
+        IntegrarBicicletaRequest request = new IntegrarBicicletaRequest();
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+        request.setIdFuncionario(1);
+
+        doNothing().when(service).integrarNaRede(any(IntegrarBicicletaRequest.class));
+
+        mockMvc.perform(post("/bicicleta/integrarNaRede")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void integrarNaRedeErro() throws Exception {
+        IntegrarBicicletaRequest request = new IntegrarBicicletaRequest();
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+
+        doThrow(new InvalidActionException("Tranca não está livre")).when(service).integrarNaRede(any(IntegrarBicicletaRequest.class));
+
+        mockMvc.perform(post("/bicicleta/integrarNaRede")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.codigo").value("422"))
+                .andExpect(jsonPath("$.mensagem").value("Tranca não está livre"));
+    }
+
+    @Test
+    void retirarDaRedeSucesso() throws Exception {
+        RetirarBicicletaRequest request = new RetirarBicicletaRequest();
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+        request.setIdFuncionario(1);
+        request.setStatusAcaoReparador("EM_REPARO");
+
+        doNothing().when(service).retirarDaRede(any(RetirarBicicletaRequest.class));
+
+        mockMvc.perform(post("/bicicleta/retirarDaRede")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void alterarStatusSucesso() throws Exception {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(1);
+        bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
+
+        BicicletaResponse responseDto = new BicicletaResponse();
+        responseDto.setId(1);
+        responseDto.setStatus("DISPONIVEL");
+
+        when(service.alterarStatus(1, "DISPONIVEL")).thenReturn(bicicleta);
+        when(converter.domainToDto(bicicleta)).thenReturn(responseDto);
+
+        mockMvc.perform(post("/bicicleta/1/status/DISPONIVEL"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DISPONIVEL"));
+    }
+
+    @Test
+    void alterarStatusErro() throws Exception {
+        when(service.alterarStatus(1, "DISPONIVEL")).thenThrow(new InvalidActionException("Bicicleta está EM_USO"));
+
+        mockMvc.perform(post("/bicicleta/1/status/DISPONIVEL"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.codigo").value("422"))
+                .andExpect(jsonPath("$.mensagem").value("Bicicleta está EM_USO"));
     }
 }
