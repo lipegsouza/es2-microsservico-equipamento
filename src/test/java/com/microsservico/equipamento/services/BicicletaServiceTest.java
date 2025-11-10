@@ -376,6 +376,10 @@ class BicicletaServiceTest {
     @Test
     void retirarDaRedeErroStatusAcaoReparadorInvalido() {
         RetirarBicicletaRequest request = new RetirarBicicletaRequest();
+
+        request.setIdBicicleta(1);
+        request.setIdTranca(1);
+
         request.setStatusAcaoReparador("STATUS_QUE_NAO_EXISTE");
 
         when(repository.buscar(1)).thenReturn(Optional.of(new Bicicleta()));
