@@ -23,6 +23,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.microsservico.equipamento.domain.Bicicleta;
+import com.microsservico.equipamento.dto.request.IntegrarTrancaRequest;
+import com.microsservico.equipamento.dto.request.RetirarTrancaRequest;
+import com.microsservico.equipamento.dto.request.TrancaAcaoRequest;
+import com.microsservico.equipamento.dto.response.BicicletaResponse;
 
 @WebMvcTest(TrancaController.class)
     class TrancaControllerTest {
@@ -38,6 +43,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     @MockBean
     private TrancaConverter converter;
+
+    @MockBean
+    private BicicletaConverter bicicletaConverter;
 
     private TrancaRequest exemploTeste() {
         TrancaRequest requestDto = new TrancaRequest();
@@ -199,5 +207,138 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.codigo").value("422"))
                 .andExpect(jsonPath("$.mensagem").value(msgErro));
+    }
+
+    @Test
+    void integrarNaRedeSucesso() throws Exception {
+        IntegrarTrancaRequest request = new IntegrarTrancaRequest();
+        request.setIdTranca(1);
+        request.setIdTotem(1);
+
+        mockMvc.perform(post("/tranca/integrarNaRede")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void integrarNaRedeErro() throws Exception {
+        IntegrarTrancaRequest request = new IntegrarTrancaRequest();
+        request.setIdTranca(1);
+        request.setIdTotem(1);
+
+        String msgErro = "Ação inválida. Tranca deve estar com status NOVA ou EM_REPARO.";
+        doThrow(new InvalidActionException(msgErro)).when(service).integrarNaRede(any(IntegrarTrancaRequest.class));
+
+        mockMvc.perform(post("/tranca/integrarNaRede")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.mensagem").value(msgErro));
+    }
+
+    @Test
+    void retirarDaRedeSucesso() throws Exception {
+        RetirarTrancaRequest request = new RetirarTrancaRequest();
+        request.setIdTranca(1);
+        request.setIdTotem(1);
+        request.setStatusAcaoReparador("EM_REPARO");
+
+        mockMvc.perform(post("/tranca/retirarDaRede")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBicicletaSucesso() throws Exception {
+        Bicicleta bicicleta = new Bicicleta();
+        bicicleta.setId(100);
+        BicicletaResponse responseDto = new BicicletaResponse();
+        responseDto.setId(100);
+
+        when(service.getBicicleta(1)).thenReturn(bicicleta);
+        when(bicicletaConverter.domainToDto(bicicleta)).thenReturn(responseDto);
+
+        mockMvc.perform(get("/tranca/1/bicicleta")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(100));
+    }
+
+    @Test
+    void getBicicletaErro() throws Exception {
+        String msgErro = "Tranca está livre ou não possui bicicleta associada.";
+        when(service.getBicicleta(1)).thenThrow(new NotFoundException(msgErro));
+
+        mockMvc.perform(get("/tranca/1/bicicleta")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensagem").value(msgErro));
+    }
+
+    @Test
+    void trancarSucesso() throws Exception {
+        TrancaAcaoRequest request = new TrancaAcaoRequest();
+        request.setBicicleta(100);
+
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.OCUPADA);
+
+        TrancaResponse responseDto = new TrancaResponse();
+        responseDto.setId(1);
+        responseDto.setStatus("OCUPADA");
+
+        when(service.trancar(eq(1), any(TrancaAcaoRequest.class))).thenReturn(tranca);
+        when(converter.domainToDto(tranca)).thenReturn(responseDto);
+
+        mockMvc.perform(post("/tranca/1/trancar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OCUPADA"));
+    }
+
+    @Test
+    void destrancarSucesso() throws Exception {
+        TrancaAcaoRequest request = new TrancaAcaoRequest();
+        request.setBicicleta(100);
+
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
+
+        TrancaResponse responseDto = new TrancaResponse();
+        responseDto.setId(1);
+        responseDto.setStatus("LIVRE");
+
+        when(service.destrancar(eq(1), any(TrancaAcaoRequest.class))).thenReturn(tranca);
+        when(converter.domainToDto(tranca)).thenReturn(responseDto);
+
+        mockMvc.perform(post("/tranca/1/destrancar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("LIVRE"));
+    }
+
+    @Test
+    void alterarStatusSucesso() throws Exception {
+        Tranca tranca = new Tranca();
+        tranca.setId(1);
+        tranca.setStatus(StatusTranca.LIVRE);
+
+        TrancaResponse responseDto = new TrancaResponse();
+        responseDto.setId(1);
+        responseDto.setStatus("LIVRE");
+
+        when(service.alterarStatus(1, "DESTRANCAR")).thenReturn(tranca);
+        when(converter.domainToDto(tranca)).thenReturn(responseDto);
+
+        mockMvc.perform(post("/tranca/1/status/DESTRANCAR")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("LIVRE"));
     }
 }
