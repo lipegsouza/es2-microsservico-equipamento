@@ -25,6 +25,8 @@ public class TrancaService {
     private final TotemService totemService;
     private final BicicletaRepository bicicletaRepository;
 
+    private static final String BICICLETA_NAO_ENCONTRADA = "Bicicleta não encontrada com o ID: ";
+
     private void validar(Tranca tranca) {
         if (tranca.getModelo() == null || tranca.getModelo().isBlank() ||
                 tranca.getAnoDeFabricacao() == null || tranca.getAnoDeFabricacao().isBlank()) {
@@ -125,7 +127,7 @@ public class TrancaService {
             throw new NotFoundException("Tranca está livre ou não possui bicicleta associada.");
         }
         return bicicletaRepository.buscar(tranca.getBicicleta())
-                .orElseThrow(() -> new NotFoundException("Bicicleta não encontrada com o ID: " + tranca.getBicicleta()));
+                .orElseThrow(() -> new NotFoundException(BICICLETA_NAO_ENCONTRADA + tranca.getBicicleta()));
     }
 
     public Tranca trancar(int idTranca, TrancaAcaoRequest request) {
@@ -140,7 +142,7 @@ public class TrancaService {
         }
 
         Bicicleta bicicleta = bicicletaRepository.buscar(request.getBicicleta())
-                .orElseThrow(() -> new NotFoundException("Bicicleta não encontrada com o ID: " + request.getBicicleta()));
+                .orElseThrow(() -> new NotFoundException(BICICLETA_NAO_ENCONTRADA + request.getBicicleta()));
 
         if (bicicleta.getStatus() != StatusBicicleta.EM_USO) {
             throw new InvalidActionException("Bicicleta não está EM_USO.");
@@ -166,7 +168,7 @@ public class TrancaService {
         }
 
         Bicicleta bicicleta = bicicletaRepository.buscar(tranca.getBicicleta())
-                .orElseThrow(() -> new NotFoundException("Bicicleta não encontrada com o ID: " + tranca.getBicicleta()));
+                .orElseThrow(() -> new NotFoundException(BICICLETA_NAO_ENCONTRADA + tranca.getBicicleta()));
 
         if (bicicleta.getStatus() != StatusBicicleta.DISPONIVEL) {
             throw new InvalidActionException("Bicicleta na tranca não está DISPONIVEL.");
