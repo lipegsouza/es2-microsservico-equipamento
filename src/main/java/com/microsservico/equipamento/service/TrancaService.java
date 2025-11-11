@@ -174,10 +174,8 @@ public class TrancaService {
             throw new InvalidActionException("Bicicleta na tranca não está DISPONIVEL.");
         }
 
-        if (request != null && request.getBicicleta() != null) {
-            if (!Objects.equals(request.getBicicleta(), bicicleta.getId())) {
-                throw new InvalidActionException("ID da bicicleta informado não corresponde ao da tranca.");
-            }
+        if (request != null && request.getBicicleta() != null && !Objects.equals(request.getBicicleta(), bicicleta.getId())) {
+            throw new InvalidActionException("ID da bicicleta informado não corresponde ao da tranca.");
         }
 
         tranca.setStatus(StatusTranca.LIVRE);
