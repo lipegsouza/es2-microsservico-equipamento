@@ -9,6 +9,7 @@ import com.microsservico.equipamento.dto.request.RetirarBicicletaRequest;
 import com.microsservico.equipamento.exception.InvalidActionException;
 import com.microsservico.equipamento.exception.NotFoundException;
 import com.microsservico.equipamento.repository.BicicletaRepository;
+import com.microsservico.equipamento.repository.TrancaRepository;
 import com.microsservico.equipamento.service.BicicletaService;
 import com.microsservico.equipamento.service.TrancaService;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,9 @@ class BicicletaServiceTest {
 
     @Mock
     private TrancaService trancaService;
+
+    @Mock
+    private TrancaRepository trancaRepository;
 
     @InjectMocks
     private BicicletaService service;
@@ -190,6 +194,27 @@ class BicicletaServiceTest {
 
         assertEquals("Ação inválida. Apenas bicicletas com status APOSENTADA podem ser excluídas.", exception.getMessage());
         verify(repository, times(1)).buscar(idExistente);
+        verify(repository, times(0)).deletar(idExistente);
+    }
+
+    @Test
+    void deletarErroBicicletaEmTranca() {
+        int idExistente = 1;
+        Bicicleta bicicletaExistente = new Bicicleta();
+        bicicletaExistente.setId(idExistente);
+        bicicletaExistente.setStatus(StatusBicicleta.APOSENTADA);
+
+        Tranca tranca = new Tranca();
+        tranca.setBicicleta(idExistente);
+
+        when(repository.buscar(idExistente)).thenReturn(Optional.of(bicicletaExistente));
+        when(trancaRepository.listar()).thenReturn(List.of(tranca));
+
+        InvalidActionException exception = assertThrows(InvalidActionException.class, () -> service.deletar(idExistente));
+
+        assertEquals("Ação inválida. Bicicleta ainda está associada a uma tranca.", exception.getMessage());
+        verify(repository, times(1)).buscar(idExistente);
+        verify(trancaRepository, times(1)).listar();
         verify(repository, times(0)).deletar(idExistente);
     }
 

@@ -9,9 +9,11 @@ import com.microsservico.equipamento.dto.request.RetirarBicicletaRequest;
 import com.microsservico.equipamento.exception.InvalidActionException;
 import com.microsservico.equipamento.exception.NotFoundException;
 import com.microsservico.equipamento.repository.BicicletaRepository;
+import com.microsservico.equipamento.repository.TrancaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class BicicletaService {
 
     private final BicicletaRepository repository;
     private final TrancaService trancaService;
+    private final TrancaRepository trancaRepository;
     private static final AtomicInteger numeroCounter = new AtomicInteger(1);
 
     private void validar(Bicicleta bicicleta) {
@@ -67,6 +70,12 @@ public class BicicletaService {
 
         if (bicicleta.getStatus() != StatusBicicleta.APOSENTADA) {
             throw new InvalidActionException("Ação inválida. Apenas bicicletas com status APOSENTADA podem ser excluídas.");
+        }
+
+        boolean emTranca = trancaRepository.listar().stream()
+                .anyMatch(tranca -> Objects.equals(tranca.getBicicleta(), id));
+        if (emTranca) {
+            throw new InvalidActionException("Ação inválida. Bicicleta ainda está associada a uma tranca.");
         }
 
         repository.deletar(bicicleta.getId());
@@ -123,7 +132,7 @@ public class BicicletaService {
             throw new InvalidActionException("Tranca não está ocupada.");
         }
 
-        if (tranca.getBicicleta() == null || tranca.getBicicleta() != bicicleta.getId()) {
+        if (tranca.getBicicleta() == null || !Objects.equals(tranca.getBicicleta(), bicicleta.getId())) {
             throw new InvalidActionException("Bicicleta não corresponde à bicicleta na tranca.");
         }
 
