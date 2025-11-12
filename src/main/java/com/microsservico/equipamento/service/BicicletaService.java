@@ -1,5 +1,7 @@
 package com.microsservico.equipamento.service;
 
+import com.microsservico.equipamento.client.AluguelClient;
+import com.microsservico.equipamento.client.ExternoClient;
 import com.microsservico.equipamento.domain.Bicicleta;
 import com.microsservico.equipamento.domain.StatusBicicleta;
 import com.microsservico.equipamento.domain.StatusTranca;
@@ -23,6 +25,8 @@ public class BicicletaService {
     private final BicicletaRepository repository;
     private final TrancaService trancaService;
     private final TrancaRepository trancaRepository;
+    private final AluguelClient aluguelClient;
+    private final ExternoClient externoClient;
     private static final AtomicInteger numeroCounter = new AtomicInteger(1);
 
     private void validar(Bicicleta bicicleta) {
@@ -86,6 +90,7 @@ public class BicicletaService {
     }
 
     public void integrarNaRede(IntegrarBicicletaRequest request) {
+        aluguelClient.validarReparador(request.getIdFuncionario());
         Bicicleta bicicleta = buscar(request.getIdBicicleta());
         Tranca tranca = trancaService.buscar(request.getIdTranca());
 
@@ -107,9 +112,16 @@ public class BicicletaService {
 
         repository.salvar(bicicleta);
         trancaService.salvar(tranca);
+
+        externoClient.enviarEmail(
+                aluguelClient.getFuncionarioEmail(request.getIdFuncionario()),
+                "Bicicleta Integrada à Rede",
+                "A bicicleta ID " + bicicleta.getId() + " foi integrada na tranca ID " + tranca.getId() + "."
+        );
     }
 
     public void retirarDaRede(RetirarBicicletaRequest request) {
+        aluguelClient.validarReparador(request.getIdFuncionario());
         Bicicleta bicicleta = buscar(request.getIdBicicleta());
         Tranca tranca = trancaService.buscar(request.getIdTranca());
 
@@ -142,6 +154,12 @@ public class BicicletaService {
 
         repository.salvar(bicicleta);
         trancaService.salvar(tranca);
+
+        externoClient.enviarEmail(
+                aluguelClient.getFuncionarioEmail(request.getIdFuncionario()),
+                "Bicicleta Retirada da Rede",
+                "A bicicleta ID " + bicicleta.getId() + " foi retirada da tranca ID " + tranca.getId() + " para " + novoStatus.name()
+        );
     }
 
     public Bicicleta alterarStatus(int idBicicleta, String acao) {

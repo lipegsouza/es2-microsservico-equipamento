@@ -1,5 +1,7 @@
 package com.microsservico.equipamento.service;
 
+import com.microsservico.equipamento.client.AluguelClient;
+import com.microsservico.equipamento.client.ExternoClient;
 import com.microsservico.equipamento.domain.Bicicleta;
 import com.microsservico.equipamento.domain.StatusBicicleta;
 import com.microsservico.equipamento.domain.StatusTranca;
@@ -24,6 +26,8 @@ public class TrancaService {
     private final TrancaRepository repository;
     private final TotemService totemService;
     private final BicicletaRepository bicicletaRepository;
+    private final AluguelClient aluguelClient;
+    private final ExternoClient externoClient;
 
     private static final String BICICLETA_NAO_ENCONTRADA = "Bicicleta não encontrada com o ID: ";
 
@@ -78,6 +82,7 @@ public class TrancaService {
     }
 
     public void integrarNaRede(IntegrarTrancaRequest request) {
+        aluguelClient.validarReparador(request.getIdFuncionario());
         Tranca tranca = buscar(request.getIdTranca());
         totemService.buscar(request.getIdTotem());
 
@@ -92,9 +97,16 @@ public class TrancaService {
         tranca.setIdTotem(request.getIdTotem());
         tranca.setStatus(StatusTranca.LIVRE);
         repository.salvar(tranca);
+
+        externoClient.enviarEmail(
+                aluguelClient.getFuncionarioEmail(request.getIdFuncionario()),
+                "Tranca Integrada ao Totem",
+                "A tranca ID " + tranca.getId() + " foi integrada no totem ID " + request.getIdTotem() + "."
+        );
     }
 
     public void retirarDaRede(RetirarTrancaRequest request) {
+        aluguelClient.validarReparador(request.getIdFuncionario());
         Tranca tranca = buscar(request.getIdTranca());
 
         if (!Objects.equals(tranca.getIdTotem(), request.getIdTotem())) {
@@ -119,6 +131,12 @@ public class TrancaService {
         tranca.setStatus(novoStatus);
         tranca.setIdTotem(null);
         repository.salvar(tranca);
+
+        externoClient.enviarEmail(
+                aluguelClient.getFuncionarioEmail(request.getIdFuncionario()),
+                "Tranca Retirada do Totem",
+                "A tranca ID " + tranca.getId() + " foi retirada do totem ID " + request.getIdTotem() + " para " + novoStatus.name()
+        );
     }
 
     public Bicicleta getBicicleta(int idTranca) {
