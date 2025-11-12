@@ -19,6 +19,6 @@ public class RestaurarBancoService {
         bicicletaRepository.restaurar();
         totemRepository.restaurar();
         trancaRepository.restaurar();
-        bicicletaService.restaurarNumeroCounter();
+        bicicletaService.restaurarNumero();
     }
 }

@@ -39,6 +39,6 @@ class RestaurarBancoServiceTest {
         verify(bicicletaRepository, times(1)).restaurar();
         verify(totemRepository, times(1)).restaurar();
         verify(trancaRepository, times(1)).restaurar();
-        verify(bicicletaService, times(1)).restaurarNumeroCounter();
+        verify(bicicletaService, times(1)).restaurarNumero();
     }
 }

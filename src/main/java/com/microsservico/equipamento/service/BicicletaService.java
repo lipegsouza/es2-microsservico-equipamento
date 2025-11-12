@@ -37,6 +37,10 @@ public class BicicletaService {
         return numeroCounter.getAndIncrement();
     }
 
+    public void restaurarNumero() {
+        numeroCounter.set(1);
+    }
+
     public Bicicleta cadastrar(Bicicleta bicicleta) {
         validar(bicicleta);
         bicicleta.setNumero(gerarNumero());
@@ -79,10 +83,6 @@ public class BicicletaService {
         }
 
         repository.deletar(bicicleta.getId());
-    }
-
-    public void restaurarNumeroCounter() {
-        numeroCounter.set(1);
     }
 
     public void integrarNaRede(IntegrarBicicletaRequest request) {
