@@ -60,9 +60,7 @@ import static org.mockito.Mockito.*;
         Totem totemInvalido = exemploTeste();
         totemInvalido.setLocalizacao("");
 
-        assertThrows(InvalidActionException.class, () -> {
-            service.cadastrar(totemInvalido);
-        });
+        assertThrows(InvalidActionException.class, () -> service.cadastrar(totemInvalido));
         verify(repository, times(0)).salvar(any(Totem.class));
     }
 
@@ -83,9 +81,7 @@ import static org.mockito.Mockito.*;
     void buscarErro() {
         when(repository.buscar(99)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> {
-            service.buscar(99);
-        });
+        assertThrows(NotFoundException.class, () -> service.buscar(99));
     }
 
     @Test
@@ -135,9 +131,7 @@ import static org.mockito.Mockito.*;
         when(repository.buscar(idExistente)).thenReturn(Optional.of(totemExistente));
         when(trancaRepository.buscarEmTotem(idExistente)).thenReturn(List.of(new Tranca()));
 
-        assertThrows(InvalidActionException.class, () -> {
-            service.deletar(idExistente);
-        });
+        assertThrows(InvalidActionException.class, () -> service.deletar(idExistente));
 
         verify(repository, times(0)).deletar(anyInt());
     }

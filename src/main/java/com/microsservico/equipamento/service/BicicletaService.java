@@ -27,8 +27,10 @@ public class BicicletaService {
     private final TrancaRepository trancaRepository;
     private final AluguelClient aluguelClient;
     private final ExternoClient externoClient;
+
     private static final AtomicInteger numeroCounter = new AtomicInteger(1);
 
+    // UC10-R2: Validar dados obrigatórios
     private void validar(Bicicleta bicicleta) {
         if (bicicleta.getMarca() == null || bicicleta.getMarca().isBlank() ||
                 bicicleta.getModelo() == null || bicicleta.getModelo().isBlank() ||
@@ -37,6 +39,7 @@ public class BicicletaService {
         }
     }
 
+    // UC10-R5: Numero deve ser gerado pelo sistema
     public int gerarNumero() {
         return numeroCounter.getAndIncrement();
     }
@@ -48,7 +51,7 @@ public class BicicletaService {
     public Bicicleta cadastrar(Bicicleta bicicleta) {
         validar(bicicleta);
         bicicleta.setNumero(gerarNumero());
-        bicicleta.setStatus(StatusBicicleta.NOVA);
+        bicicleta.setStatus(StatusBicicleta.NOVA); // UC10-R1: Status será NOVA
         return repository.salvar(bicicleta);
     }
 
@@ -66,6 +69,7 @@ public class BicicletaService {
 
         validar(dadosNovos);
 
+        // UC10-R3: Numero e bicicleta não podem ser editados
         bicicletaExistente.setMarca(dadosNovos.getMarca());
         bicicletaExistente.setModelo(dadosNovos.getModelo());
         bicicletaExistente.setAno(dadosNovos.getAno());
@@ -76,10 +80,12 @@ public class BicicletaService {
     public void deletar(int id) {
         Bicicleta bicicleta = buscar(id);
 
+        // UC10-R4: Só pode excluir se status for 'APOSENTADA'
         if (bicicleta.getStatus() != StatusBicicleta.APOSENTADA) {
             throw new InvalidActionException("Ação inválida. Apenas bicicletas com status APOSENTADA podem ser excluídas.");
         }
 
+        // UC10-R4: Só pode excluir se não estiver em nenhuma tranca
         boolean emTranca = trancaRepository.listar().stream()
                 .anyMatch(tranca -> Objects.equals(tranca.getBicicleta(), id));
         if (emTranca) {
@@ -91,19 +97,18 @@ public class BicicletaService {
 
     public void integrarNaRede(IntegrarBicicletaRequest request) {
         aluguelClient.validarReparador(request.getIdFuncionario());
+
         Bicicleta bicicleta = buscar(request.getIdBicicleta());
         Tranca tranca = trancaService.buscar(request.getIdTranca());
 
+        // Tranca precisa estar 'LIVRE'
         if (tranca.getStatus() != StatusTranca.LIVRE) {
             throw new InvalidActionException("Tranca não está livre.");
         }
 
+        // Bicicleta precisa ser 'NOVA' ou estar 'EM_REPARO'
         if (bicicleta.getStatus() != StatusBicicleta.NOVA && bicicleta.getStatus() != StatusBicicleta.EM_REPARO) {
             throw new InvalidActionException("Bicicleta não está com status NOVA ou EM_REPARO.");
-        }
-
-        if(tranca.getBicicleta() != null) {
-            throw new InvalidActionException("Tranca já possui uma bicicleta.");
         }
 
         bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
@@ -122,39 +127,31 @@ public class BicicletaService {
 
     public void retirarDaRede(RetirarBicicletaRequest request) {
         aluguelClient.validarReparador(request.getIdFuncionario());
+
         Bicicleta bicicleta = buscar(request.getIdBicicleta());
         Tranca tranca = trancaService.buscar(request.getIdTranca());
 
-        StatusBicicleta novoStatus;
-        try {
-            novoStatus = StatusBicicleta.valueOf(request.getStatusAcaoReparador().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidActionException("Status de ação inválido: " + request.getStatusAcaoReparador());
-        }
+        StatusBicicleta novoStatus = StatusBicicleta.valueOf(request.getStatusAcaoReparador().toUpperCase());
 
-        if (novoStatus != StatusBicicleta.EM_REPARO && novoStatus != StatusBicicleta.APOSENTADA) {
-            throw new InvalidActionException("Ação de reparador deve ser EM_REPARO ou APOSENTADA.");
-        }
-
+        // Bicicleta deve estar 'REPARO_SOLICITADO'
         if (bicicleta.getStatus() != StatusBicicleta.REPARO_SOLICITADO) {
             throw new InvalidActionException("Bicicleta não está com status REPARO_SOLICITADO.");
         }
 
+        // Tranca deve estar 'OCUPADA'
         if (tranca.getStatus() != StatusTranca.OCUPADA) {
             throw new InvalidActionException("Tranca não está ocupada.");
-        }
-
-        if (tranca.getBicicleta() == null || !Objects.equals(tranca.getBicicleta(), bicicleta.getId())) {
-            throw new InvalidActionException("Bicicleta não corresponde à bicicleta na tranca.");
         }
 
         bicicleta.setStatus(novoStatus);
         tranca.setStatus(StatusTranca.LIVRE);
         tranca.setBicicleta(null);
 
+        // UC09-R1
         repository.salvar(bicicleta);
         trancaService.salvar(tranca);
 
+        // UC09-R2
         externoClient.enviarEmail(
                 aluguelClient.getFuncionarioEmail(request.getIdFuncionario()),
                 "Bicicleta Retirada da Rede",
@@ -170,10 +167,6 @@ public class BicicletaService {
             novoStatus = StatusBicicleta.valueOf(acao.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new InvalidActionException("Ação de status inválida: " + acao);
-        }
-
-        if (bicicleta.getStatus() == StatusBicicleta.EM_USO) {
-            throw new InvalidActionException("Bicicleta está EM_USO e não pode ter status alterado manualmente.");
         }
 
         bicicleta.setStatus(novoStatus);

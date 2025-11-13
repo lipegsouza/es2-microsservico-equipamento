@@ -31,6 +31,7 @@ public class TrancaService {
 
     private static final String BICICLETA_NAO_ENCONTRADA = "Bicicleta não encontrada com o ID: ";
 
+    // UC13-R2: Validar dados obrigatórios
     private void validar(Tranca tranca) {
         if (tranca.getModelo() == null || tranca.getModelo().isBlank() ||
                 tranca.getAnoDeFabricacao() == null || tranca.getAnoDeFabricacao().isBlank()) {
@@ -43,7 +44,7 @@ public class TrancaService {
 
     public Tranca cadastrar(Tranca tranca) {
         validar(tranca);
-        tranca.setStatus(StatusTranca.NOVA);
+        tranca.setStatus(StatusTranca.NOVA); // UC13-R1: Status será 'NOVA'
         return repository.salvar(tranca);
     }
 
@@ -60,6 +61,7 @@ public class TrancaService {
         Tranca trancaExistente = buscar(id);
         validar(dadosNovos);
 
+        // UC13-R3: Numero e status não podem ser editados
         trancaExistente.setLocalizacao(dadosNovos.getLocalizacao());
         trancaExistente.setAnoDeFabricacao(dadosNovos.getAnoDeFabricacao());
         trancaExistente.setModelo(dadosNovos.getModelo());
@@ -70,6 +72,7 @@ public class TrancaService {
     public void deletar(int id) {
         Tranca tranca = buscar(id);
 
+        // UC13-R4: Só pode excluir se não tiver bicicleta
         if (tranca.getBicicleta() != null) {
             throw new InvalidActionException("Ação inválida. Apenas trancas sem bicicletas podem ser excluídas.");
         }
@@ -86,12 +89,9 @@ public class TrancaService {
         Tranca tranca = buscar(request.getIdTranca());
         totemService.buscar(request.getIdTotem());
 
+        // Tranca 'NOVA' ou 'EM_REPARO'
         if (tranca.getStatus() != StatusTranca.NOVA && tranca.getStatus() != StatusTranca.EM_REPARO) {
             throw new InvalidActionException("Ação inválida. Tranca deve estar com status NOVA ou EM_REPARO.");
-        }
-
-        if (tranca.getIdTotem() != null) {
-            throw new InvalidActionException("Tranca já está associada a um totem.");
         }
 
         tranca.setIdTotem(request.getIdTotem());
@@ -109,20 +109,12 @@ public class TrancaService {
         aluguelClient.validarReparador(request.getIdFuncionario());
         Tranca tranca = buscar(request.getIdTranca());
 
-        if (!Objects.equals(tranca.getIdTotem(), request.getIdTotem())) {
-            throw new InvalidActionException("Tranca não pertence ao totem informado.");
-        }
-
+        // Tranca deve estar sem bicicleta
         if (tranca.getBicicleta() != null) {
             throw new InvalidActionException("Ação inválida. Tranca possui uma bicicleta.");
         }
 
-        StatusTranca novoStatus;
-        try {
-            novoStatus = StatusTranca.valueOf(request.getStatusAcaoReparador().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidActionException("Status de ação inválido: " + request.getStatusAcaoReparador());
-        }
+        StatusTranca novoStatus = StatusTranca.valueOf(request.getStatusAcaoReparador().toUpperCase());
 
         if (novoStatus != StatusTranca.EM_REPARO && novoStatus != StatusTranca.APOSENTADA) {
             throw new InvalidActionException("Ação de reparador deve ser EM_REPARO ou APOSENTADA.");
@@ -155,6 +147,7 @@ public class TrancaService {
             throw new InvalidActionException("ID da bicicleta é obrigatório para trancar.");
         }
 
+        // Tranca deve estar 'LIVRE'
         if (tranca.getStatus() != StatusTranca.LIVRE) {
             throw new InvalidActionException("Tranca não está livre.");
         }
@@ -162,6 +155,7 @@ public class TrancaService {
         Bicicleta bicicleta = bicicletaRepository.buscar(request.getBicicleta())
                 .orElseThrow(() -> new NotFoundException(BICICLETA_NAO_ENCONTRADA + request.getBicicleta()));
 
+        // Bicicleta deve estar 'EM_USO'
         if (bicicleta.getStatus() != StatusBicicleta.EM_USO) {
             throw new InvalidActionException("Bicicleta não está EM_USO.");
         }
@@ -178,6 +172,7 @@ public class TrancaService {
     public Tranca destrancar(int idTranca, TrancaAcaoRequest request) {
         Tranca tranca = buscar(idTranca);
 
+        // Tranca deve estar 'OCUPADA'
         if (tranca.getStatus() != StatusTranca.OCUPADA) {
             throw new InvalidActionException("Tranca não está ocupada.");
         }
@@ -188,6 +183,7 @@ public class TrancaService {
         Bicicleta bicicleta = bicicletaRepository.buscar(tranca.getBicicleta())
                 .orElseThrow(() -> new NotFoundException(BICICLETA_NAO_ENCONTRADA + tranca.getBicicleta()));
 
+        // Bicicleta deve estar 'DISPONIVEL'
         if (bicicleta.getStatus() != StatusBicicleta.DISPONIVEL) {
             throw new InvalidActionException("Bicicleta na tranca não está DISPONIVEL.");
         }

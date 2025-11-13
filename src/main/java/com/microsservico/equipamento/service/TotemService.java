@@ -21,8 +21,9 @@ public class TotemService {
 
     private final TrancaRepository trancaRepository;
 
-    private final  BicicletaRepository bicicletaRepository;
+    private final BicicletaRepository bicicletaRepository;
 
+    // UC14-R1: Validar dados obrigatórios
     private void validar(Totem totem) {
         if (totem.getLocalizacao() == null || totem.getLocalizacao().isBlank() ||
                 totem.getDescricao() == null || totem.getDescricao().isBlank()) {
@@ -57,6 +58,7 @@ public class TotemService {
     public void deletar(int id) {
         Totem totem = buscar(id);
 
+        // UC14-R3: Só pode excluir totem sem trancas
         List<Tranca> trancasNoTotem = trancaRepository.buscarEmTotem(id);
         if (!trancasNoTotem.isEmpty()) {
             throw new InvalidActionException("Ação inválida. Apenas totens sem trancas podem ser excluídos.");

@@ -245,23 +245,6 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-    void retirarDaRedeErroTotemIncorreto() {
-        RetirarTrancaRequest request = new RetirarTrancaRequest();
-        request.setIdTranca(1);
-        request.setIdTotem(2);
-        request.setStatusAcaoReparador("APOSENTADA");
-
-        Tranca tranca = exemploTeste();
-        tranca.setId(1);
-        tranca.setIdTotem(1);
-        tranca.setBicicleta(null);
-
-        when(repository.buscar(1)).thenReturn(Optional.of(tranca));
-
-        assertThrows(InvalidActionException.class, () -> service.retirarDaRede(request));
-    }
-
-    @Test
     void getBicicletaSucesso() {
         Tranca tranca = exemploTeste();
         tranca.setId(1);
