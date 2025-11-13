@@ -1,5 +1,7 @@
 package com.microsservico.equipamento.services;
 
+import com.microsservico.equipamento.client.AluguelClient;
+import com.microsservico.equipamento.client.ExternoClient;
 import com.microsservico.equipamento.domain.Bicicleta;
 import com.microsservico.equipamento.domain.StatusBicicleta;
 import com.microsservico.equipamento.domain.StatusTranca;
@@ -35,6 +37,12 @@ class BicicletaServiceTest {
 
     @Mock
     private TrancaRepository trancaRepository;
+
+    @Mock
+    private AluguelClient aluguelClient;
+
+    @Mock
+    private ExternoClient externoClient;
 
     @InjectMocks
     private BicicletaService service;

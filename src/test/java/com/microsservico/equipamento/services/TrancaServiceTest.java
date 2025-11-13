@@ -1,5 +1,7 @@
 package com.microsservico.equipamento.services;
 
+import com.microsservico.equipamento.client.AluguelClient;
+import com.microsservico.equipamento.client.ExternoClient;
 import com.microsservico.equipamento.domain.StatusTranca;
 import com.microsservico.equipamento.domain.Tranca;
 import com.microsservico.equipamento.exception.InvalidActionException;
@@ -32,14 +34,20 @@ import static org.mockito.Mockito.*;
     @Mock
     private TrancaRepository repository;
 
-    @InjectMocks
-    private TrancaService service;
-
     @Mock
     private TotemService totemService;
 
     @Mock
     private BicicletaRepository bicicletaRepository;
+
+    @Mock
+    private AluguelClient aluguelClient;
+
+    @Mock
+    private ExternoClient externoClient;
+
+    @InjectMocks
+    private TrancaService service;
 
     private Tranca exemploTeste() {
         Tranca tranca = new Tranca();
